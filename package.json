@@ -20,6 +20,10 @@
     "react-router-dom": "^5.1.2",
     "socket.io": "^2.3.0"
   },
+  "engines": {
+    "node": "12.13.1",
+    "npm": "6.12.1"
+  },
   "devDependencies": {
     "nodemon": "^2.0.3"
   }
