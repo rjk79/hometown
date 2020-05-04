@@ -8,8 +8,8 @@ class Game {
         this.cards = []
         this.players = {}      
         this.messages = []
-        this.isStarted = false
         this.currentTurnColor = "red"
+        this.winner = null
 
         const colors = ['red', 'blue', 'white', 'black']
         const amounts = [9, 8, 7, 1]
@@ -19,6 +19,10 @@ class Game {
         }
         
         this.cards = this.shuffleCards(this.cards)
+    }
+
+    otherColor(color) {
+        return color === "red" ? "blue" : "red"
     }
 
     shuffleCards(cards) {
@@ -47,29 +51,28 @@ class Game {
         return res
     }
 
-    addPlayer(playerId) {
+    addPlayer(playerId, username) {
         let { players } = this
-        players[playerId] = new Player()
+        players[playerId] = new Player(username)
     }
 
-    changeTeams(playerId) {
+    changeTurn() {
+        this.currentTurnColor = this.otherColor(this.currentTurnColor)
+    }
+
+    changeTeam(playerId) {
         let {players} = this
-        if (players[playerId].color === "red") {
-            players[playerId].color = "blue"
-        }
-        else {
-            players[playerId].color = "red"
-        }
-        
+        players[playerId].color = this.otherColor(players[playerId].color)
     }
 
     makeMove(idx, playerId) {
         if (this.players[playerId].color === this.currentTurnColor) {
             this.cards[idx].isRevealed = true
         }
+        this.winner = this.findWinner()
     }
 
-    winner() {
+    findWinner() {
         if (this.cards.filter(c=>c.color==="red" && c.isRevealed).length === 9) {
             return "red"
         }

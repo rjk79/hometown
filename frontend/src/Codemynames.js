@@ -28,9 +28,9 @@ class Codemynames extends React.Component {
     }
     
     handleSubmitCurrentUser(e) {
-        const {gameName} = this.state
+        const {gameName, currentUser} = this.state
         e.preventDefault()
-        socket.emit('join lobby', gameName)
+        socket.emit('join lobby', {gameName, currentUser})
         this.props.history.push("/game")
     }
 
@@ -38,7 +38,6 @@ class Codemynames extends React.Component {
         const {currentUser} = this.state
         return (
             <div>
-                <div>Your Username: {currentUser}</div>
                 <Switch className="container-fluid">
                     <Welcome exact path="/" socket={socket} 
                         handleSetCurrentUser={this.handleSetCurrentUser} 
@@ -46,7 +45,10 @@ class Codemynames extends React.Component {
                         currentUser={currentUser} 
                         handleSubmitCurrentUser={this.handleSubmitCurrentUser}
                         />
-                    <Game exact path="/game" socket={socket} />
+                    <Game exact path="/game" 
+                        socket={socket} 
+                        currentUser={currentUser}
+                        />
                 </Switch>
             </div>
         );

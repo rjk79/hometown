@@ -26,6 +26,14 @@ function sendGameToAllPlayers(gameId) {
         io.to(playerIds[i]).emit('receive game', game)
     }
 }
+function sendMessageToAllPlayers(gameId, message, socketId) {
+    const game = lobby[gameId]
+    const name = game.players[socketId].username
+    const playerIds = Object.keys(game.players)
+    for (let i = 0; i < playerIds.length; i++) {
+        io.to(playerIds[i]).emit('receive message', {message, name})
+    }
+}
 
 io.on('connection', (socket) => {
     console.log('Client connected' + socket.id);
@@ -36,33 +44,57 @@ io.on('connection', (socket) => {
         console.log('Client disconnected')
     });
 
-    socket.on('send message', (message, gameId) => { //client has sent a message. use socket instead of io. 
-        const game = lobby[gameId]
-        const playerIds = Object.keys(game.players)
-        for (let i = 0; i < playerIds.length; i++) {
-            io.to(playerIds[i]).emit('receive message', { message, name: players[socket.id] })
-        }
+    socket.on('send message', data => { //client has sent a message. use socket instead of io. 
+        const {message, id} = data
+        sendMessageToAllPlayers(id, message, players[socket.id])
         //send message to clients. use io instead of socket to emit to all other sockets
     })
 
-    socket.on('join lobby', gameId => {
+    socket.on('join lobby', ({gameName, currentUser}) => {
+        const gameId = gameName
         if (!(gameId in lobby)) lobby[gameId] = new Game(gameId);
         const game = lobby[gameId]
-        game.addPlayer(socket.id)
+        game.addPlayer(socket.id, currentUser)
         sendGameToAllPlayers(gameId)
     })
 
     socket.on('reset game', gameId => {
-        const game = lobby[gameId]
+        let game = lobby[gameId]
         let currPlayers = game.players
         game = new Game()
         game.players = currPlayers
         sendGameToAllPlayers(gameId)
     })
 
-    socket.on('make move', (idx, gameId) => {
-        const game = lobby[gameId]
+    socket.on('make move', data => {
+        const {idx, id} = data
+        const game = lobby[id]
         game.makeMove(idx, socket.id)
+        sendMessageToAllPlayers(id, "revealed a card", socket.id)
+        sendGameToAllPlayers(id)
+    })
+
+    socket.on('change team', data => {
+        const { gameId } = data
+        const game = lobby[gameId]
+        game.changeTeam(socket.id)
         sendGameToAllPlayers(gameId)
+        sendMessageToAllPlayers(gameId, "changed teams!", socket.id)
+    })
+
+    socket.on('change turn', data => {
+        const {gameId} = data
+        const game = lobby[gameId]
+        game.changeTurn()
+        sendGameToAllPlayers(gameId)
+        sendMessageToAllPlayers(gameId, "ended the turn", socket.id)
+    })
+
+    socket.on('change spymaster status', data => {
+        const { gameId } = data
+        const game = lobby[gameId]
+        game.players[socket.id].isSpymaster = !game.players[socket.id].isSpymaster
+        sendGameToAllPlayers(gameId)
+        sendMessageToAllPlayers(gameId, "changed spymaster status!", socket.id)
     })
 });
