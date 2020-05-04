@@ -80,12 +80,7 @@ class Game {
             return "blue"
         } 
         else if (this.cards.filter(c => c.color === "black" && c.isRevealed).length) {
-            if (this.currentTurnColor === "red") {
-                return "red"
-            }
-            else {
-                return "blue"
-            }
+            return this.otherColor(this.currentTurnColor)
         }
         else {
             return null

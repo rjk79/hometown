@@ -46,7 +46,7 @@ io.on('connection', (socket) => {
 
     socket.on('send message', data => { //client has sent a message. use socket instead of io. 
         const {message, id} = data
-        sendMessageToAllPlayers(id, message, players[socket.id])
+        sendMessageToAllPlayers(id, message, socket.id)
         //send message to clients. use io instead of socket to emit to all other sockets
     })
 
@@ -61,8 +61,9 @@ io.on('connection', (socket) => {
     socket.on('reset game', gameId => {
         let game = lobby[gameId]
         let currPlayers = game.players
-        game = new Game()
+        game = new Game(gameId)
         game.players = currPlayers
+        lobby[gameId] = game
         sendGameToAllPlayers(gameId)
     })
 
@@ -72,6 +73,7 @@ io.on('connection', (socket) => {
         game.makeMove(idx, socket.id)
         sendMessageToAllPlayers(id, "revealed a card", socket.id)
         sendGameToAllPlayers(id)
+        if (game.winner) sendMessageToAllPlayers(id, "ended the game. " + game.winner + " has won!!!", socket.id)
     })
 
     socket.on('change team', data => {

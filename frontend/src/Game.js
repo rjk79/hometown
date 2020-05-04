@@ -2,6 +2,7 @@ import Board from './Board/Board'
 import React from "react";
 // import io from "socket.io-client";
 import './App.css'
+import {translateColor} from './utils'
 
 // const socket = io('http://localhost:5000')
 
@@ -85,7 +86,9 @@ class Game extends React.Component {
         const { message, messages, game } = this.state
         const { currentUser } = this.props
 
-        const messageLis = messages.map((m, i) => <div key={i}>{m.name + ":" + m.message}</div>)
+        const messageLis = messages.map((m, i) => 
+            <div key={i}><strong>{m.name}</strong>{":" + m.message}</div>
+        )
         const yourColor = game ? Object.values(game.players).filter(p => p.username === currentUser)[0].color : null
         const gameName = game ? game.id : null
         return (
@@ -94,15 +97,15 @@ class Game extends React.Component {
                     <div className="cards-headers">
                         <div>Game name: {gameName}</div>
                         <div>Your name: {currentUser}</div>
-                        <div>Your color: {yourColor}</div>
-                        <div>Current Team's Color: {game && game.currentTurnColor}</div>
+                        <div style={game ? {background: translateColor(yourColor)} : {}}>Your color: {yourColor}</div>
+                        <div style={game ? { background: translateColor(game.currentTurnColor)} : {}}>Current Team's Color: {game && game.currentTurnColor}</div>
                         <Board game={game} 
                             makeMove={makeMove}
                             currentUser={currentUser}
                         />
-                        <button onClick={this.changeTurn}>End Turn</button>
-                        <button onClick={this.changeTeam}>Change Team</button>
-                        <button onClick={this.changeSpymasterStatus}>Toggle Spymaster Status</button>
+                        <button className="btn btn-success" onClick={this.changeTurn}>End Turn</button>
+                        <button className="btn btn-success" onClick={this.changeTeam}>Change Team</button>
+                        <button className="btn btn-success" onClick={this.changeSpymasterStatus}>Toggle Spymaster Status</button>
                     </div>
                     <div className="messaging-controls">
                         <div className="messages">
