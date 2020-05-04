@@ -1,0 +1,55 @@
+ul {
+    height: 100%;
+    width: 100%;
+    /* display: flex;
+    flex-wrap: wrap; */
+}
+
+.card-row {
+    display: flex;
+}
+
+.card {
+    background: rgb(230, 210, 180);
+    border: 2px solid gray;
+    border-radius: 5px;
+    height: 19%;
+    width: 19%;
+    padding: 20px 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin: 5px;
+}
+
+.card div {
+    width: 100%;
+    background: ghostwhite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card::before {
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 0px;
+    border-left: 2px solid purple;
+    border-right: 2px solid purple;
+    transition: height .3s;
+}
+
+.card:hover::before {
+    content: "Select";
+    height: 100%;
+    transition: height .3s;
+}
+
+.card:hover {
+    cursor: pointer;
+}
+
+
+
