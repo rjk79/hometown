@@ -17,34 +17,52 @@ let server = app.listen(port, () => console.log(`Server is running on port ${por
 const socketIO = require('socket.io');
 const io = socketIO(server);
 
-let game = new Game()
-let players = {}
+let lobby = {} //games
+
+function sendGameToAllPlayers(gameId) {
+    const game = lobby[gameId]
+    const playerIds = Object.keys(game.players)
+    for (let i = 0; i < playerIds.length; i++) {
+        io.to(playerIds[i]).emit('receive game', game)
+    }
+}
 
 io.on('connection', (socket) => {
     console.log('Client connected' + socket.id);
-    socket.on('send player', username => {
-        players[socket.id] = username
-        io.emit('receive player', Object.values(players))
-    })
 
     socket.on('disconnect', () => {
-        delete players[socket.id]
-        io.emit('receive player', Object.values(players))
+        // delete players[socket.id]
+        // io.emit('receive player', Object.values(players))
         console.log('Client disconnected')
     });
 
-    socket.on('send message', message => { //client has sent a message. use socket instead of io. 
-        console.log(socket.id + "sending message")
-        io.emit('receive message', {message, name: players[socket.id]}) //send message to clients. use io instead of socket to emit to all other sockets
+    socket.on('send message', (message, gameId) => { //client has sent a message. use socket instead of io. 
+        const game = lobby[gameId]
+        const playerIds = Object.keys(game.players)
+        for (let i = 0; i < playerIds.length; i++) {
+            io.to(playerIds[i]).emit('receive message', { message, name: players[socket.id] })
+        }
+        //send message to clients. use io instead of socket to emit to all other sockets
     })
 
-    socket.on('start game', () => {
+    socket.on('join lobby', gameId => {
+        if (!(gameId in lobby)) lobby[gameId] = new Game(gameId);
+        const game = lobby[gameId]
+        game.addPlayer(socket.id)
+        sendGameToAllPlayers(gameId)
+    })
+
+    socket.on('reset game', gameId => {
+        const game = lobby[gameId]
+        let currPlayers = game.players
         game = new Game()
-        io.emit('receive game', game)
+        game.players = currPlayers
+        sendGameToAllPlayers(gameId)
     })
 
-    socket.on('make move', idx => {
+    socket.on('make move', (idx, gameId) => {
+        const game = lobby[gameId]
         game.makeMove(idx, socket.id)
-        io.emit('receive game', game)
+        sendGameToAllPlayers(gameId)
     })
 });

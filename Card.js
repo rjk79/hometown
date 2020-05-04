@@ -1,9 +1,9 @@
-
 class Card {
-    constructor(color, word) {
+    constructor(color, word, idx) {
         this.isRevealed = false
         this.color = color
         this.word = word
+        this.idx = idx
     }
 }
 

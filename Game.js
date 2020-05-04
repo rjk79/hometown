@@ -1,12 +1,15 @@
 const WORDS = require('./constants')
 const Card = require("./Card")
+const Player = require("./Player")
 
 class Game {
-    constructor() {
+    constructor(id) {
+        this.id = id
         this.cards = []
-        this.players = {}        
+        this.players = {}      
         this.messages = []
         this.isStarted = false
+        this.currentTurnColor = "red"
 
         const colors = ['red', 'blue', 'white', 'black']
         const amounts = [9, 8, 7, 1]
@@ -34,22 +37,56 @@ class Game {
     makeCards(color, amount, cards) {
         let res = []
         for (let i = 0; i < amount; i++) {
-            let randomWord = WORDS[Math.floor(Math.random() * 401)]
-            const chosenWords = cards.map(c => c.word)
-            while (chosenWords.includes(randomWord)) {
-                randomWord = WORDS[Math.floor(Math.random() * 401)]
+            let randomIdx = Math.floor(Math.random() * 400) //400 words. highest random # is ~399.999 => 399
+            const chosenWords = cards.map(c => c.word).concat(res.map(c => c.word))
+            while (chosenWords.includes(WORDS[randomIdx])) {
+                randomIdx = Math.floor(Math.random() * 400)
             }
-            res.push(new Card(color, randomWord))
+            res.push(new Card(color, WORDS[randomIdx], randomIdx))
         }
         return res
     }
 
-    makeMove(idx, playerId) {
-        this.cards[idx].isRevealed = true
+    addPlayer(playerId) {
+        let { players } = this
+        players[playerId] = new Player()
     }
 
-    isGameover() {
+    changeTeams(playerId) {
+        let {players} = this
+        if (players[playerId].color === "red") {
+            players[playerId].color = "blue"
+        }
+        else {
+            players[playerId].color = "red"
+        }
+        
+    }
 
+    makeMove(idx, playerId) {
+        if (this.players[playerId].color === this.currentTurnColor) {
+            this.cards[idx].isRevealed = true
+        }
+    }
+
+    winner() {
+        if (this.cards.filter(c=>c.color==="red" && c.isRevealed).length === 9) {
+            return "red"
+        }
+        else if (this.cards.filter(c => c.color === "blue" && c.isRevealed).length === 8) {
+            return "blue"
+        } 
+        else if (this.cards.filter(c => c.color === "black" && c.isRevealed).length) {
+            if (this.currentTurnColor === "red") {
+                return "red"
+            }
+            else {
+                return "blue"
+            }
+        }
+        else {
+            return null
+        }
     }
 }
 

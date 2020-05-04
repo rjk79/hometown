@@ -5,24 +5,32 @@ import Game from './Game'
 import { Welcome } from './Welcome'
 import { Switch, withRouter } from 'react-router-dom';
 
-const socket = io() // can specify 'http://localhost:5000' to remove error
+const socket = io('http://localhost:5000') // can specify 'http://localhost:5000' to remove error
 
 class Codemynames extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            currentUser: ""
+            currentUser: "",
+            gameName: ""
         }
         this.handleSetCurrentUser = this.handleSetCurrentUser.bind(this);
+        this.handleSetGameName = this.handleSetGameName.bind(this);
         this.handleSubmitCurrentUser = this.handleSubmitCurrentUser.bind(this);
     }
 
     handleSetCurrentUser(e) {
         this.setState({ currentUser: e.target.value })
     }
+
+    handleSetGameName(e) {
+        this.setState({ gameName: e.target.value })
+    }
     
     handleSubmitCurrentUser(e) {
+        const {gameName} = this.state
         e.preventDefault()
+        socket.emit('join lobby', gameName)
         this.props.history.push("/game")
     }
 
@@ -30,11 +38,11 @@ class Codemynames extends React.Component {
         const {currentUser} = this.state
         return (
             <div>
-                <div className="title">Code/\/ames</div>
-                <div>{currentUser}</div>
+                <div>Your Username: {currentUser}</div>
                 <Switch className="container-fluid">
                     <Welcome exact path="/" socket={socket} 
                         handleSetCurrentUser={this.handleSetCurrentUser} 
+                        handleSetGameName={this.handleSetGameName} 
                         currentUser={currentUser} 
                         handleSubmitCurrentUser={this.handleSubmitCurrentUser}
                         />

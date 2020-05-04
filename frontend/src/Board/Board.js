@@ -31,8 +31,10 @@ class Board extends Component {
                 for (let j = 0; j < 5; j++) {
                     const card = cards[5 * i + j]
                     let color = this.translateColor(card.color)
+                    let borderable = card.isRevealed ? "" : "borderable"
+                    if (!card.word) {debugger}
                     rowItems.push(
-                        <div key={j} className="card" onClick={makeMove(5*i+j)} style={card.isRevealed ? {background: color} : {}}>
+                        <div key={j} className={"card " + borderable} onClick={makeMove(5*i+j)} style={card.isRevealed ? {background: color} : {}}>
                             <div>
                                 {card.word}
                             </div>

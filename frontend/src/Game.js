@@ -16,15 +16,19 @@ class Game extends React.Component {
         }
         this.handleSetMessage = this.handleSetMessage.bind(this)
         this.sendMessage = this.sendMessage.bind(this);
-        this.startGame = this.startGame.bind(this);
+        this.resetGame = this.resetGame.bind(this);
         this.makeMove = this.makeMove.bind(this);
     }
 
     componentDidMount() {
         this.socket.on("receive message", data => {
-            this.setState({ messages: this.state.messages.concat([data]) })
+            this.setState({ messages: this.state.messages.concat([data]) }, () => {
+                let messages = document.getElementsByClassName("messages")[0]
+                messages.scrollTop = messages.scrollHeight;
+            })
         });
         this.socket.on("receive game", data => {
+            debugger
             this.setState({ game: data }, () => console.log(this.state))
         });
     }
@@ -35,8 +39,10 @@ class Game extends React.Component {
     }
 
     sendMessage(e) {
+        const {id} = this.state.game
+        const {message} = this.state
         e.preventDefault()
-        this.socket.emit('send message', this.state.message)
+        this.socket.emit('send message', {message, id})
         this.setState({ message: "" })
     }
 
@@ -44,36 +50,41 @@ class Game extends React.Component {
         this.setState({ message: e.target.value })
     }
 
-    startGame() {
-        this.socket.emit('start game')
+    resetGame() {
+        const {id} = this.state.game
+        this.socket.emit('reset game', id)
     }
 
     makeMove(idx) {
+        const {id} = this.state.game
         return () => {
-            this.socket.emit('make move', idx)
+            this.socket.emit('make move', {idx, id})
         }
     }
 
     render() {
-        const { sendMessage, handleSetMessage, startGame, makeMove } = this
+        const { sendMessage, handleSetMessage, resetGame, makeMove } = this
         const { message, messages, game } = this.state
         const messageLis = messages.map((m, i) => <div key={i}>{m.name + ":" + m.message}</div>)
         return (
             <div>                
                 <div className="main">
-                    <Board cards={game && game.cards} 
-                        makeMove={makeMove}
-                    />
+                    <div className="cards-headers">
+                        <div>Current Team's Turn: {game && game.currentTurnColor}</div>
+                        <Board cards={game && game.cards} 
+                            makeMove={makeMove}
+                        />
+                    </div>
                     <div className="messaging-controls">
                         <div className="messages">
                             <div className="title">Chat</div>
                             {messageLis}
                         </div>
                         <form onSubmit={sendMessage}>
-                            <input type="text" onChange={handleSetMessage} value={message} />
-                            <input type="submit" value="Send" className="btn btn-primary send" />
+                            <input type="text" onChange={handleSetMessage} value={message} placeholder="Message"/>
+                            <input type="submit" value="Send Message" className="btn btn-primary send" />
                         </form>
-                        <button onClick={startGame}>New Game</button>
+                        <button className="btn btn-warning" onClick={resetGame}>New Game</button>
                     </div>
                 </div>
             </div>

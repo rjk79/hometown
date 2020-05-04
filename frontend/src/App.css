@@ -37,6 +37,10 @@
   }
 }
 
+.cards-headers {
+  width: 100%;
+}
+
 .title {
   font-size: 24px;
   font-weight: 600;
@@ -54,12 +58,16 @@
   border-radius: 5px;
 }
 
+.messaging-controls input {
+  width: 100%;
+}
+
 .messages {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   list-style: none;
-  height: 80vh;
+  height: 86vh;
   overflow-y: scroll;
   overflow-wrap: break-word;
   width: 20vw;
