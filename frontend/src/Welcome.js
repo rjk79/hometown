@@ -60,13 +60,13 @@ class Welcome extends Component {
                         <input type="text" onChange={props.handleSetCurrentUser} value={props.currentUser} placeholder="Choose Username" className="form-control" />
                     </div>
                     <div className="form-group">
-                        <input type="text" onChange={handleSetGameName} value={gameName} placeholder="Join / Create Game Code" className="form-control" />
+                        <input type="text" onChange={handleSetGameName} value={gameName} placeholder="Join / Create Room Code" className="form-control" />
                     </div>
-                    <div>Team 1 Color:</div>
+                    <div>Team 1 Color: (pick random if joining existing game)</div>
                     <div class="form-check">
                         {radioButtons(0)}
                     </div>
-                    <div>Team 2 Color:</div>
+                    <div>Team 2 Color: (pick random if joining existing game)</div>
                     <div class="form-check">
                         {radioButtons(1)}
                     </div>

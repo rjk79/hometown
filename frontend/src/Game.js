@@ -4,8 +4,6 @@ import React from "react";
 import './App.css'
 import {translateColor} from './utils'
 
-// const socket = io('http://localhost:5000')
-
 class Game extends React.Component {
     constructor(props) {
         super(props)
@@ -22,6 +20,7 @@ class Game extends React.Component {
         this.changeTurn = this.changeTurn.bind(this);
         this.changeTeam = this.changeTeam.bind(this);
         this.changeSpymasterStatus = this.changeSpymasterStatus.bind(this);
+        this.teamPlayerLis = this.teamPlayerLis.bind(this);
     }
 
     componentDidMount() {
@@ -81,6 +80,16 @@ class Game extends React.Component {
         this.socket.emit('change spymaster status', { gameId: id })
     }
 
+    teamPlayerLis (num) {
+        const {game} = this.state
+        return Object.values(game.players).filter(p => p.color === game['color' + num.toString()]).map((p, i) => {
+            const spymasterLabel = p.isSpymaster ? "[SPYMASTER]" : null
+            return (
+                <li key={i} style={{ color: p.color }}>{p.username} {spymasterLabel}</li>
+            )
+        })
+    }
+
     render() {
         const { sendMessage, handleSetMessage, resetGame, makeMove } = this
         const { message, messages, game } = this.state
@@ -100,12 +109,8 @@ class Game extends React.Component {
             yourColor = game ? currentUserObject.color : null
             gameName = game ? game.id : null
             changeTurnButton = game.currentTurnColor === yourColor ? <button className="btn btn-info" onClick={this.changeTurn}>End Your Team's Turn</button> : null
-            team1PlayerLis = Object.values(game.players).filter(p => p.color === game.color1).map((p, i) => (
-                <li key={i} style={{color: p.color}}>{p.username}</li>
-            ))
-            team2PlayerLis = Object.values(game.players).filter(p => p.color === game.color2).map((p, i) => (
-                <li key={i} style={{color: p.color}}>{p.username}</li>
-            ))
+            team1PlayerLis = this.teamPlayerLis(1)
+            team2PlayerLis = this.teamPlayerLis(2)
         }
         return (
             <div>                

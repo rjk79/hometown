@@ -45,8 +45,11 @@ io.on('connection', (socket) => {
     console.log('Client connected' + socket.id);
 
     socket.on('disconnect', () => {
-        // delete players[socket.id]
-        // io.emit('receive player', Object.values(players))
+        const game = Object.values(lobby).filter(g => Object.keys(g.players).includes(socket.id))
+        sendMessageToAllPlayers(game.id, "left the game.", socket.id)
+        
+        delete game.players[socket.id]
+        sendGameToAllPlayers(game.id)
         console.log('Client disconnected')
     });
 
