@@ -3,17 +3,19 @@ const Card = require("./Card")
 const Player = require("./Player")
 
 class Game {
-    constructor(id) {
+    constructor(id, color1, color2) {
         this.id = id
         this.cards = []
         this.players = {}      
         this.messages = []
-        this.currentTurnColor = "red"
+        this.currentTurnColor = color1
         this.winner = null
         this.mostRecentMove = null
         this.shouldChangeTurn = false
+        this.color1 = color1
+        this.color2 = color2
 
-        const colors = ['red', 'blue', 'white', 'black']
+        const colors = [color1, color2, 'white', 'black']
         const amounts = [9, 8, 7, 1]
         for (let i=0; i<colors.length; i++) {
             const newCards = this.makeCards(colors[i], amounts[i], this.cards)
@@ -24,7 +26,7 @@ class Game {
     }
 
     otherColor(color) {
-        return color === "red" ? "blue" : "red"
+        return color === this.color1 ? this.color2 : this.color1
     }
 
     shuffleCards(cards) {
@@ -54,8 +56,8 @@ class Game {
     }
 
     addPlayer(playerId, username) {
-        let { players } = this
-        players[playerId] = new Player(username)
+        let { players, color1 } = this
+        players[playerId] = new Player(username, color1)
     }
 
     changeTurn() {
@@ -99,11 +101,12 @@ class Game {
     }
 
     findWinner() {
-        if (this.cards.filter(c=>c.color==="red" && c.isRevealed).length === 9) {
-            return "red"
+        const {color1, color2} = this
+        if (this.cards.filter(c=>c.color === color1 && c.isRevealed).length === 9) {
+            return color1
         }
-        else if (this.cards.filter(c => c.color === "blue" && c.isRevealed).length === 8) {
-            return "blue"
+        else if (this.cards.filter(c => c.color === color2 && c.isRevealed).length === 8) {
+            return color2
         } 
         else if (this.cards.filter(c => c.color === "black" && c.isRevealed).length) {
             return this.otherColor(this.currentTurnColor)

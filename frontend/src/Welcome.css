@@ -5,3 +5,11 @@
     flex-direction: column;
     justify-content: center;
 }
+
+.form-check > *{
+    margin: 5px;
+}
+
+.form-check input {
+    margin: 2px;
+}

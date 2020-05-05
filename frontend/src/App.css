@@ -76,3 +76,17 @@
 .send {
   width: 100%;
 }
+
+.color-reminder {
+  display: flex;
+  font-size: 20px;
+}
+
+.color-reminder div {
+  width: 100%;
+}
+
+.game-controls {
+  display: flex;
+  justify-content: space-around;
+}

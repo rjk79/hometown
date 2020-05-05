@@ -56,9 +56,9 @@ io.on('connection', (socket) => {
         //send message to clients. use io instead of socket to emit to all other sockets
     })
 
-    socket.on('join lobby', ({gameName, currentUser}) => {
+    socket.on('join lobby', ({gameName, currentUser, colors}) => {
         const gameId = gameName
-        if (!(gameId in lobby)) lobby[gameId] = new Game(gameId);
+        if (!(gameId in lobby)) lobby[gameId] = new Game(gameId, colors[0], colors[1]);
         const game = lobby[gameId]
         game.addPlayer(socket.id, currentUser)
         sendGameToAllPlayers(gameId)
@@ -67,7 +67,7 @@ io.on('connection', (socket) => {
     socket.on('reset game', gameId => {
         let game = lobby[gameId]
         let currPlayers = game.players
-        game = new Game(gameId)
+        game = new Game(gameId, game.color1, game.color2)
         game.players = currPlayers
         lobby[gameId] = game
         sendGameToAllPlayers(gameId)
@@ -96,7 +96,7 @@ io.on('connection', (socket) => {
     socket.on('opt to change turn', data => {
         const {gameId} = data
         changeTurn(gameId, socket.id)
-        sendMessageToAllPlayers(gameId, `ended the turn`, socketId)
+        sendMessageToAllPlayers(gameId, `ended the turn`, socket.id)
     })
 
     socket.on('change spymaster status', data => {

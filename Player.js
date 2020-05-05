@@ -1,7 +1,7 @@
 class Player {
-    constructor(username) {
+    constructor(username, color) {
         this.username = username
-        this.color = "red"
+        this.color = color
         this.isSpymaster = false
     }
 }

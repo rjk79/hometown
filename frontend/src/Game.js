@@ -97,7 +97,7 @@ class Game extends React.Component {
             currentUserObject = Object.values(game.players).filter(p => p.username === currentUser)[0]
             yourColor = game ? currentUserObject.color : null
             gameName = game ? game.id : null
-            changeTurnButton = game.currentTurnColor === yourColor ? <button className="btn btn-success" onClick={this.changeTurn}>End Turn</button> : null
+            changeTurnButton = game.currentTurnColor === yourColor ? <button className="btn btn-info" onClick={this.changeTurn}>End Your Team's Turn</button> : null
         }
         return (
             <div>                
@@ -105,15 +105,20 @@ class Game extends React.Component {
                     <div className="cards-headers">
                         <div>Game name: {gameName}</div>
                         <div>Your name: {currentUser}</div>
-                        <div style={game ? {color: translateColor(yourColor)} : {}}>You are on {yourColor && yourColor.toUpperCase()} Team</div>
-                        <div style={game ? { background: translateColor(game.currentTurnColor)} : {}}>It's {game && game.currentTurnColor.toUpperCase()} Team's Turn</div>
+                        <div className="color-reminder" style={game ? {color: translateColor(yourColor)} : {}}>You are on {yourColor && yourColor.toUpperCase()} Team</div>
+                        <div className="color-reminder" style={game ? { background: translateColor(game.currentTurnColor) } : {}}>
+                            <div>It's {game && game.currentTurnColor.toUpperCase()} Team's Turn </div>
+                            {changeTurnButton}
+                        </div>
+
                         <Board game={game} 
                             makeMove={makeMove}
                             currentUser={currentUser}
                         />
-                        <button className="btn btn-success" onClick={this.changeTeam}>Change Team</button>
-                        <button className="btn btn-success" onClick={this.changeSpymasterStatus}>Toggle Spymaster Status</button>
-                        {changeTurnButton}
+                        <div className="game-controls">
+                            <button className="btn btn-info" onClick={this.changeTeam}>Change Team</button>
+                            <button className="btn btn-info" onClick={this.changeSpymasterStatus}>Toggle Spymaster Status</button>
+                        </div>
                     </div>
                     <div className="messaging-controls">
                         <div className="messages">
