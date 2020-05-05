@@ -93,17 +93,25 @@ class Game extends React.Component {
         let yourColor
         let gameName
         let changeTurnButton
+        let team1PlayerLis
+        let team2PlayerLis
         if (game) {
             currentUserObject = Object.values(game.players).filter(p => p.username === currentUser)[0]
             yourColor = game ? currentUserObject.color : null
             gameName = game ? game.id : null
             changeTurnButton = game.currentTurnColor === yourColor ? <button className="btn btn-info" onClick={this.changeTurn}>End Your Team's Turn</button> : null
+            team1PlayerLis = Object.values(game.players).filter(p => p.color === game.color1).map((p, i) => (
+                <li key={i} style={{color: p.color}}>{p.username}</li>
+            ))
+            team2PlayerLis = Object.values(game.players).filter(p => p.color === game.color2).map((p, i) => (
+                <li key={i} style={{color: p.color}}>{p.username}</li>
+            ))
         }
         return (
             <div>                
                 <div className="main">
                     <div className="cards-headers">
-                        <div>Game name: {gameName}</div>
+                        <div>Game code: {gameName}</div>
                         <div>Your name: {currentUser}</div>
                         <div className="color-reminder" style={game ? {color: translateColor(yourColor)} : {}}>You are on {yourColor && yourColor.toUpperCase()} Team</div>
                         <div className="color-reminder" style={game ? { background: translateColor(game.currentTurnColor) } : {}}>
@@ -115,9 +123,15 @@ class Game extends React.Component {
                             makeMove={makeMove}
                             currentUser={currentUser}
                         />
+                        <div>
+                            <div>Team {game && game.color1.toUpperCase()}:</div>
+                            {team1PlayerLis}
+                            <div>Team {game && game.color2.toUpperCase()}:</div>
+                            {team2PlayerLis}
+                        </div>
                         <div className="game-controls">
                             <button className="btn btn-info" onClick={this.changeTeam}>Change Team</button>
-                            <button className="btn btn-info" onClick={this.changeSpymasterStatus}>Toggle Spymaster Status</button>
+                            <button className="btn btn-info" onClick={this.changeSpymasterStatus}>View/Unview as Spymaster</button>
                         </div>
                     </div>
                     <div className="messaging-controls">

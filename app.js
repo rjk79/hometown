@@ -61,6 +61,7 @@ io.on('connection', (socket) => {
         if (!(gameId in lobby)) lobby[gameId] = new Game(gameId, colors[0], colors[1]);
         const game = lobby[gameId]
         game.addPlayer(socket.id, currentUser)
+        sendMessageToAllPlayers(gameId, "joined the game!", socket.id)
         sendGameToAllPlayers(gameId)
     })
 
@@ -80,7 +81,7 @@ io.on('connection', (socket) => {
         sendMessageToAllPlayers(id, game.mostRecentMove, socket.id)
         sendGameToAllPlayers(id)
         if (game.winner) {
-            sendMessageToAllPlayers(id, "ended the game. " + game.winner + " has won!!!", socket.id)
+            sendMessageToAllPlayers(id, "ended the game. " + "Team " + game.winner.toUpperCase() + " has won!!!", socket.id)
         }
         if (game.shouldChangeTurn) changeTurn(id, socket.id)
     })
@@ -96,7 +97,7 @@ io.on('connection', (socket) => {
     socket.on('opt to change turn', data => {
         const {gameId} = data
         changeTurn(gameId, socket.id)
-        sendMessageToAllPlayers(gameId, `ended the turn`, socket.id)
+        sendMessageToAllPlayers(gameId, `ended the turn early`, socket.id)
     })
 
     socket.on('change spymaster status', data => {

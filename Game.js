@@ -71,16 +71,16 @@ class Game {
 
     setMostRecentMove(player, card) {
         if (player.color === card.color) {
-            this.mostRecentMove = "contacted a fellow agent"
+            this.mostRecentMove = `found a fellow spy! (${card.word.toUpperCase()})`
         }
         else if (card.color === 'white') {
-            this.mostRecentMove = "contacted a bystander"
+            this.mostRecentMove = `found a bystander. (${card.word.toUpperCase()})`
         }
         else if (card.color === 'black') {
-            this.mostRecentMove = "contacted the assassin!!!"
+            this.mostRecentMove = `found the assassin!!! (${card.word.toUpperCase()})`
         }
         else {
-            this.mostRecentMove = "contacted an enemy spy!"
+            this.mostRecentMove = `found an enemy spy! (${card.word.toUpperCase()})`
         }
     }
 
