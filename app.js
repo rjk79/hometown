@@ -31,7 +31,7 @@ function sendMessageToAllPlayers(gameId, message, socketId) {
     const name = game.players[socketId].username
     const playerIds = Object.keys(game.players)
     for (let i = 0; i < playerIds.length; i++) {
-        io.to(playerIds[i]).emit('receive message', {message, name})
+        io.to(playerIds[i]).emit('receive message', {message: "*" + message + "*", name})
     }
 }
 
@@ -45,11 +45,13 @@ io.on('connection', (socket) => {
     console.log('Client connected' + socket.id);
 
     socket.on('disconnect', () => {
-        const game = Object.values(lobby).filter(g => Object.keys(g.players).includes(socket.id))[0]
-        sendMessageToAllPlayers(game.id, "left the game.", socket.id)
-        
-        delete game.players[socket.id]
-        sendGameToAllPlayers(game.id)
+        const gamesJoined = Object.values(lobby).filter(g => Object.keys(g.players).includes(socket.id))
+        if (gamesJoined.length) {
+            game = gamesJoined[0]
+            sendMessageToAllPlayers(game.id, "left the game.", socket.id)
+            delete game.players[socket.id]
+            sendGameToAllPlayers(game.id)
+        }
         console.log('Client disconnected')
     });
 
