@@ -68,7 +68,7 @@ class Game extends React.Component {
 
     changeTurn() {
         const { id } = this.state.game
-        this.socket.emit('change turn', { gameId: id })
+        this.socket.emit('opt to change turn', { gameId: id })
     }
 
     changeTeam() {
@@ -89,23 +89,31 @@ class Game extends React.Component {
         const messageLis = messages.map((m, i) => 
             <div key={i}><strong>{m.name}</strong>{":" + m.message}</div>
         )
-        const yourColor = game ? Object.values(game.players).filter(p => p.username === currentUser)[0].color : null
-        const gameName = game ? game.id : null
+        let currentUserObject
+        let yourColor
+        let gameName
+        let changeTurnButton
+        if (game) {
+            currentUserObject = Object.values(game.players).filter(p => p.username === currentUser)[0]
+            yourColor = game ? currentUserObject.color : null
+            gameName = game ? game.id : null
+            changeTurnButton = game.currentTurnColor === yourColor ? <button className="btn btn-success" onClick={this.changeTurn}>End Turn</button> : null
+        }
         return (
             <div>                
                 <div className="main">
                     <div className="cards-headers">
                         <div>Game name: {gameName}</div>
                         <div>Your name: {currentUser}</div>
-                        <div style={game ? {background: translateColor(yourColor)} : {}}>Your color: {yourColor}</div>
-                        <div style={game ? { background: translateColor(game.currentTurnColor)} : {}}>Current Team's Color: {game && game.currentTurnColor}</div>
+                        <div style={game ? {color: translateColor(yourColor)} : {}}>You are on {yourColor && yourColor.toUpperCase()} Team</div>
+                        <div style={game ? { background: translateColor(game.currentTurnColor)} : {}}>It's {game && game.currentTurnColor.toUpperCase()} Team's Turn</div>
                         <Board game={game} 
                             makeMove={makeMove}
                             currentUser={currentUser}
                         />
-                        <button className="btn btn-success" onClick={this.changeTurn}>End Turn</button>
                         <button className="btn btn-success" onClick={this.changeTeam}>Change Team</button>
                         <button className="btn btn-success" onClick={this.changeSpymasterStatus}>Toggle Spymaster Status</button>
+                        {changeTurnButton}
                     </div>
                     <div className="messaging-controls">
                         <div className="messages">

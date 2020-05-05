@@ -35,6 +35,12 @@ function sendMessageToAllPlayers(gameId, message, socketId) {
     }
 }
 
+function changeTurn(gameId, socketId){
+    const game = lobby[gameId]
+    game.changeTurn()
+    sendGameToAllPlayers(gameId)
+}
+
 io.on('connection', (socket) => {
     console.log('Client connected' + socket.id);
 
@@ -71,9 +77,12 @@ io.on('connection', (socket) => {
         const {idx, id} = data
         const game = lobby[id]
         game.makeMove(idx, socket.id)
-        sendMessageToAllPlayers(id, "revealed a card", socket.id)
+        sendMessageToAllPlayers(id, game.mostRecentMove, socket.id)
         sendGameToAllPlayers(id)
-        if (game.winner) sendMessageToAllPlayers(id, "ended the game. " + game.winner + " has won!!!", socket.id)
+        if (game.winner) {
+            sendMessageToAllPlayers(id, "ended the game. " + game.winner + " has won!!!", socket.id)
+        }
+        if (game.shouldChangeTurn) changeTurn(id, socket.id)
     })
 
     socket.on('change team', data => {
@@ -84,12 +93,10 @@ io.on('connection', (socket) => {
         sendMessageToAllPlayers(gameId, "changed teams!", socket.id)
     })
 
-    socket.on('change turn', data => {
+    socket.on('opt to change turn', data => {
         const {gameId} = data
-        const game = lobby[gameId]
-        game.changeTurn()
-        sendGameToAllPlayers(gameId)
-        sendMessageToAllPlayers(gameId, "ended the turn", socket.id)
+        changeTurn(gameId, socket.id)
+        sendMessageToAllPlayers(gameId, `ended the turn`, socketId)
     })
 
     socket.on('change spymaster status', data => {

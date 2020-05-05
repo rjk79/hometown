@@ -10,6 +10,8 @@ class Game {
         this.messages = []
         this.currentTurnColor = "red"
         this.winner = null
+        this.mostRecentMove = null
+        this.shouldChangeTurn = false
 
         const colors = ['red', 'blue', 'white', 'black']
         const amounts = [9, 8, 7, 1]
@@ -65,11 +67,35 @@ class Game {
         players[playerId].color = this.otherColor(players[playerId].color)
     }
 
-    makeMove(idx, playerId) {
-        if (this.players[playerId].color === this.currentTurnColor) {
-            this.cards[idx].isRevealed = true
+    setMostRecentMove(player, card) {
+        if (player.color === card.color) {
+            this.mostRecentMove = "contacted a fellow agent"
         }
+        else if (card.color === 'white') {
+            this.mostRecentMove = "contacted a bystander"
+        }
+        else if (card.color === 'black') {
+            this.mostRecentMove = "contacted the assassin!!!"
+        }
+        else {
+            this.mostRecentMove = "contacted an enemy spy!"
+        }
+    }
+
+    makeMove(idx, playerId) {
+        const player = this.players[playerId] 
+        const card = this.cards[idx]
+        if (player.color === this.currentTurnColor) card.isRevealed = true
+        
+        this.setMostRecentMove(player, card)
         this.winner = this.findWinner()
+
+        if (!this.winner && (player.color !== card.color)) {
+            this.shouldChangeTurn = true
+        }
+        else {
+            this.shouldChangeTurn = false
+        }
     }
 
     findWinner() {
