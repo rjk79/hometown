@@ -5,7 +5,7 @@ import Game from './Game'
 import Welcome from './Welcome'
 import { Switch } from 'react-router-dom';
 
-const socket = io('http://localhost:5000') // can specify 'http://localhost:5000' to remove error
+const socket = io('') // can specify 'http://localhost:5000' to remove error
 
 class Codemynames extends React.Component {
     constructor(props) {
