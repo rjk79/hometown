@@ -40,7 +40,7 @@ function sendMessageToAllPlayers(gameId, message, socketId) {
     const name = game.players[socketId].username
     const playerIds = Object.keys(game.players)
     for (let i = 0; i < playerIds.length; i++) {
-        io.to(playerIds[i]).emit('receive message', {message: "*" + message + "*", name})
+        io.to(playerIds[i]).emit('receive message', {message: message, name})
     }
 }
 
@@ -48,6 +48,18 @@ function changeTurn(gameId, socketId){
     const game = lobby[gameId]
     game.changeTurn()
     sendGameToAllPlayers(gameId)
+}
+
+function gameExists(id, socketId) {
+    const game = lobby[id]
+    if (game) {
+        return true
+    }
+    else {
+        console.log(id, lobby)
+        io.to(socketId).emit('receive message', {message: "game timed out -- sorry!", name: "ADMIN"})
+        return false
+    }
 }
 
 io.on('connection', (socket) => {
@@ -66,6 +78,8 @@ io.on('connection', (socket) => {
 
     socket.on('send message', data => { //client has sent a message. use socket instead of io. 
         const {message, id} = data
+        if (!gameExists(id, socket.id)) return; 
+
         sendMessageToAllPlayers(id, message, socket.id)
         //send message to clients. use io instead of socket to emit to all other sockets
     })
@@ -81,6 +95,8 @@ io.on('connection', (socket) => {
 
     socket.on('reset game', gameId => {
         let game = lobby[gameId]
+        if (!gameExists(gameId, socket.id)) return; 
+
         let currPlayers = game.players
         game = new Game(gameId, game.color1, game.color2)
         game.players = currPlayers
@@ -91,8 +107,8 @@ io.on('connection', (socket) => {
     socket.on('make move', data => {
         const {idx, id} = data
         const game = lobby[id]
-        if (!game) {console.log(id)}
-        if (!game) {console.log(lobby)}
+        if (!gameExists(id, socket.id)) return; 
+        
         game.makeMove(idx, socket.id)
         sendMessageToAllPlayers(id, game.mostRecentMove, socket.id)
         sendGameToAllPlayers(id)
@@ -105,6 +121,8 @@ io.on('connection', (socket) => {
     socket.on('change team', data => {
         const { gameId } = data
         const game = lobby[gameId]
+        if (!gameExists(gameId, socket.id)) return; 
+
         game.changeTeam(socket.id)
         sendGameToAllPlayers(gameId)
         sendMessageToAllPlayers(gameId, "changed teams!", socket.id)
@@ -112,6 +130,8 @@ io.on('connection', (socket) => {
 
     socket.on('opt to change turn', data => {
         const {gameId} = data
+        if (!gameExists(gameId, socket.id)) return; 
+        
         changeTurn(gameId, socket.id)
         sendMessageToAllPlayers(gameId, `ended the turn early`, socket.id)
     })
@@ -119,6 +139,8 @@ io.on('connection', (socket) => {
     socket.on('change spymaster status', data => {
         const { gameId } = data
         const game = lobby[gameId]
+        if (!gameExists(gameId, socket.id)) return; 
+
         game.players[socket.id].isSpymaster = !game.players[socket.id].isSpymaster
         sendGameToAllPlayers(gameId)
         sendMessageToAllPlayers(gameId, "changed spymaster status!", socket.id)
