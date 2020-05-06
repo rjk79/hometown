@@ -11,8 +11,10 @@ const socketIO = require('socket.io');
 const io = socketIO(server);
 
 if (process.env.NODE_ENV === 'production') {
-    app.use(
-        expressStatusMonitor({websocket: io, port: app.get('port')}),
+    app.use(expressStatusMonitor({
+            websocket: io, 
+            port: app.get('port')
+        }),
         express.static('frontend/build')
     );
     app.get('/', (req, res) => {
@@ -89,6 +91,8 @@ io.on('connection', (socket) => {
     socket.on('make move', data => {
         const {idx, id} = data
         const game = lobby[id]
+        if (!game) {console.log(id)}
+        if (!game) {console.log(lobby)}
         game.makeMove(idx, socket.id)
         sendMessageToAllPlayers(id, game.mostRecentMove, socket.id)
         sendGameToAllPlayers(id)
