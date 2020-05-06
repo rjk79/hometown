@@ -5,20 +5,24 @@ const app = express();
 
 const port = process.env.PORT || 5000;
 
+let server = app.listen(port, () => console.log(`Server is running on port ${port}`));
+
+const socketIO = require('socket.io');
+const io = socketIO(server);
+
 if (process.env.NODE_ENV === 'production') {
     app.use(
-        express.static('frontend/build')
+        express.static('frontend/build'), 
+        expressStatusMonitor({websocket: io, port: app.get('port')})
     );
     app.get('/', (req, res) => {
         res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
     })
 }
 
-let server = app.listen(port, () => console.log(`Server is running on port ${port}`));
 
 //socket.io
-const socketIO = require('socket.io');
-const io = socketIO(server);
+
 
 let lobby = {} //games
 
