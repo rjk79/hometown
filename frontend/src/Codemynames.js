@@ -25,7 +25,7 @@ class Codemynames extends React.Component {
         const {currentUser} = this.state
         const { handleSetCurrentUser } = this
         return (
-            <div>
+            <>
                 <Switch className="container-fluid">
                     <Welcome exact path="/" socket={socket} 
                         currentUser={currentUser}
@@ -36,7 +36,7 @@ class Codemynames extends React.Component {
                         currentUser={currentUser}
                         />
                 </Switch>
-            </div>
+            </>
         );
     }
 }

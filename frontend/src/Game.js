@@ -31,7 +31,6 @@ class Game extends React.Component {
             })
         });
         this.socket.on("receive game", data => {
-            debugger
             this.setState({ game: data }, () => console.log(this.state))
         });
     }
@@ -113,12 +112,14 @@ class Game extends React.Component {
             team2PlayerLis = this.teamPlayerLis(2)
         }
         return (
-            <div>                
+            <div className="App">                
                 <div className="main">
-                    <div className="cards-headers">
-                        <div>Game code: {gameName}</div>
-                        <div>Your name: {currentUser}</div>
-                        <div className="color-reminder" style={game ? {color: translateColor(yourColor)} : {}}>You are on {yourColor && yourColor.toUpperCase()} Team</div>
+                    <div className="game">
+                        <div className="game-codes">
+                            <div>Room Code: {gameName}</div>
+                            <div>Your Username: {currentUser}</div>
+                        </div>
+                        <div className="color-reminder on-white" style={game ? {color: translateColor(yourColor)} : {}}>You are on {yourColor && yourColor.toUpperCase()} Team</div>
                         <div className="color-reminder" style={game ? { background: translateColor(game.currentTurnColor) } : {}}>
                             <div>It's {game && game.currentTurnColor.toUpperCase()} Team's Turn </div>
                             {changeTurnButton}
@@ -128,11 +129,15 @@ class Game extends React.Component {
                             makeMove={makeMove}
                             currentUser={currentUser}
                         />
-                        <div>
-                            <div>Team {game && game.color1.toUpperCase()}:</div>
-                            {team1PlayerLis}
-                            <div>Team {game && game.color2.toUpperCase()}:</div>
-                            {team2PlayerLis}
+                        <div className="team-lists">
+                            <div className="team-list">
+                                <div>Team {game && game.color1.toUpperCase()}:</div>
+                                {team1PlayerLis}
+                            </div>
+                            <div className="team-list">
+                                <div>Team {game && game.color2.toUpperCase()}:</div>
+                                {team2PlayerLis}
+                            </div>
                         </div>
                         <div className="game-controls">
                             <button className="btn btn-info" onClick={this.changeTeam}>Change Team</button>

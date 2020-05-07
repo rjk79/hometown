@@ -1,5 +1,5 @@
 .App {
-  text-align: center;
+  padding: 5px;
 }
 
 .App-logo {
@@ -28,17 +28,27 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+@keyframes flashing {
+    0%   {
+        filter: brightness(1);
+    }
+    50%  {
+        filter: brightness(1.1);
+    }
+    100% {
+        filter: brightness(1);
+    }
   }
-  to {
-    transform: rotate(360deg);
-  }
+
+.game {
+  width: 100%;
+  padding: 10px;
 }
 
-.cards-headers {
-  width: 100%;
+.game-codes {
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
 }
 
 .title {
@@ -77,9 +87,18 @@
   width: 100%;
 }
 
+.color-reminder:nth-child(2) {
+  background: rgb(245, 245, 245);
+  width: 32%;
+}
+
 .color-reminder {
   display: flex;
   font-size: 20px;
+  border-radius: 5px;
+  padding: 2px;
+  align-items: center;
+  justify-content: center;
 }
 
 .color-reminder div {
@@ -89,4 +108,17 @@
 .game-controls {
   display: flex;
   justify-content: space-around;
+}
+
+.team-lists {
+  display: flex;
+}
+
+.team-list {
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+  background: rgb(245, 245, 245);
+  padding: 10px;
+  border-radius: 5px;
 }

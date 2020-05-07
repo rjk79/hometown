@@ -113,7 +113,7 @@ io.on('connection', (socket) => {
         sendMessageToAllPlayers(id, game.mostRecentMove, socket.id)
         sendGameToAllPlayers(id)
         if (game.winner) {
-            sendMessageToAllPlayers(id, "ended the game. " + "Team " + game.winner.toUpperCase() + " has won!!!", socket.id)
+            sendMessageToAllPlayers(id, "ended the game. " + game.winner.toUpperCase() + " Team" + " has won!!!", socket.id)
         }
         if (game.shouldChangeTurn) changeTurn(id, socket.id)
     })
@@ -125,7 +125,7 @@ io.on('connection', (socket) => {
 
         game.changeTeam(socket.id)
         sendGameToAllPlayers(gameId)
-        sendMessageToAllPlayers(gameId, "changed teams!", socket.id)
+        sendMessageToAllPlayers(gameId, "--CHANGED TEAMS!--", socket.id)
     })
 
     socket.on('opt to change turn', data => {
@@ -143,6 +143,6 @@ io.on('connection', (socket) => {
 
         game.players[socket.id].isSpymaster = !game.players[socket.id].isSpymaster
         sendGameToAllPlayers(gameId)
-        sendMessageToAllPlayers(gameId, "changed spymaster status!", socket.id)
+        sendMessageToAllPlayers(gameId, "--CHANGED SPYMASTER STATUS!--", socket.id)
     })
 });

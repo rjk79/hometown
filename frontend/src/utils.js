@@ -8,7 +8,7 @@ export function translateColor(color) {
             res = "orange"
             break
         case "yellow":
-            res = "yellow"
+            res = "gold"
             break
         case "green":
             res = "greenyellow"
