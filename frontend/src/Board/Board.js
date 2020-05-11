@@ -1,52 +1,66 @@
 import React, { Component } from 'react';
 import './Board.css'
 import { translateColor } from '../utils'
+import {Card} from '../Card'
 
 class Board extends Component {
     
     render() {
         const {game, makeMove, currentUser } = this.props
-        const cards = game && game.cards
 
-        
-        const grid = []
-        if (cards) {
+        let grid = []
+        if (game) {
             const currentUserObject = Object.values(game.players).filter(p => p.username === currentUser)[0]
-            const isSpymaster = currentUserObject.isSpymaster
             const hasTurn = currentUserObject.color === game.currentTurnColor
             const isOver = game.winner
-
-            for (let i = 0; i < 5; i++) {
+            const categories = ["small", "big", "purple"]
+            
+            categories.forEach(c => {
                 let rowItems = []
-                for (let j = 0; j < 5; j++) {
-                    const card = cards[5 * i + j]
+                
+                game.market[c].map((card, i) => {
                     let color = translateColor(card.color)
-
-                    const canClick = hasTurn && !card.isRevealed && !isSpymaster && !isOver
-
+                    const canClick = hasTurn && !isOver
                     let borderable = canClick ? "borderable" : ""
-                    const clickEffect = canClick ? makeMove(5 * i + j) : null
-
+                    const clickEffect = canClick ? makeMove(5 * i) : null
                     const style = {}
-                    if (card.isRevealed || isSpymaster || isOver) style.background = color 
-                    if (style.background && !card.isRevealed) style.filter = "brightness(50%)"
+                    style.background = color 
+                    const min = Math.min(...card.activation_numbers)
+                    const max = Math.max(...card.activation_numbers)
+                    let activationNumberLabel = ""
+                    if (isFinite(min)) {
+                        activationNumberLabel += min
+                        if (isFinite(max) && min !== max) {
+                            activationNumberLabel += " - "
+                            activationNumberLabel += max
+                        }
+                    }
 
                     rowItems.push(
-                        <div key={j} className={"card " + borderable} onClick={clickEffect} style={style}>
+                        <div key={i} className={"card " + borderable} onClick={clickEffect} style={style}>
                             <div>
-                                {card.word}
+                                <div>{card.name}</div>
+                                <div>{card.description}</div>
+                                <div>{activationNumberLabel}</div>
+                                <div>{card.symbol}</div>
+                                <div>{card.quantity}</div>
                             </div>
-                        </div>)
-                }
+                        </div>
+                    )
+                })
+                
                 grid.push(
-                    <div key={i} className="card-row">
+                    <div className="card-row">
                         {rowItems}
                     </div>
                 )
-            }
+
+            })
         }
+        
         return (
             <ul className="card-container">
+                <div className="title">Market:</div>
                 {grid}
             </ul>
         );

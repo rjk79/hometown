@@ -7,13 +7,10 @@ class Welcome extends Component {
         super(props);
         this.state = {
             gameName: "",
-            colors: [null, null]
         }
 
         this.handleSetGameName = this.handleSetGameName.bind(this);
         this.handleSubmitCurrentUser = this.handleSubmitCurrentUser.bind(this);
-        this.setColor = this.setColor.bind(this);
-        this.radioButtons = this.radioButtons.bind(this);
     }
 
     handleSetGameName(e) {
@@ -21,54 +18,27 @@ class Welcome extends Component {
     }
 
     handleSubmitCurrentUser(e) {
-        const { gameName, colors } = this.state
+        const { gameName } = this.state
         const {currentUser, socket} = this.props
         e.preventDefault()
-        if (!colors[0] || !colors[1] || (colors[0] === colors[1]) || !currentUser.length || !gameName.length) return;
-        socket.emit('join lobby', { gameName, currentUser, colors })
+        if (!currentUser.length || !gameName.length) return;
+        socket.emit('join lobby', { gameName, currentUser })
         this.props.history.push("/game")
-    }
-    
-    setColor(idx) {
-        return e => {
-            let clone = [...this.state.colors]
-            clone[idx] = e.target.value
-            this.setState({colors: clone})
-        }
-    }
-
-    radioButtons(idx) {
-        const colors = ["red", "orange", "yellow", "green", "blue", "purple", "pink"]
-        return colors.map((c, i) => (
-            <label key={i}>
-                <input type="radio" class="form-check-input" value={c} checked={this.state.colors[idx] === c} onChange={this.setColor(idx, c)} />
-                {c}
-            </label>
-
-        ))  
     }
 
     render() {
-        const {props, radioButtons, handleSetGameName, handleSubmitCurrentUser} = this
+        const {props, handleSetGameName, handleSubmitCurrentUser} = this
         const {gameName} = this.state
 
         return (
             <div className="welcome">
-                <div className="title">Code/\/ames</div>
+                <div className="title">#ometown</div>
                 <form onSubmit={handleSubmitCurrentUser} >
                     <div className="form-group">
                         <input type="text" onChange={props.handleSetCurrentUser} value={props.currentUser} placeholder="Choose Username" className="form-control" />
                     </div>
                     <div className="form-group">
                         <input type="text" onChange={handleSetGameName} value={gameName} placeholder="Join / Create Room Code" className="form-control" />
-                    </div>
-                    <div>Team 1 Color: (pick random if joining existing game)</div>
-                    <div class="form-check">
-                        {radioButtons(0)}
-                    </div>
-                    <div>Team 2 Color: (pick random if joining existing game)</div>
-                    <div class="form-check">
-                        {radioButtons(1)}
                     </div>
 
                     <input className="btn btn-primary" type="submit" value="Submit" />

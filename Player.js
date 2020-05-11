@@ -1,8 +1,8 @@
 class Player {
-    constructor(username, color) {
+    constructor(username) {
         this.username = username
-        this.color = color
-        this.isSpymaster = false
+        this.hand = []
+        this.coins = 3
     }
 }
 module.exports = Player

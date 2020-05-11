@@ -1,9 +1,11 @@
 class Card {
-    constructor(color, word, idx) {
-        this.isRevealed = false
+    constructor(name, description, color, activation_numbers, magnitude, symbol) {
+        this.name = name
+        this.description = description
         this.color = color
-        this.word = word
-        this.idx = idx
+        this.activation_numbers = activation_numbers
+        this.magnitude = magnitude
+        this.symbol = symbol
     }
 }
 

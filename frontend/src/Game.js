@@ -3,6 +3,7 @@ import React from "react";
 // import io from "socket.io-client";
 import './App.css'
 import {translateColor} from './utils'
+import { Hand } from './Hand';
 
 class Game extends React.Component {
     constructor(props) {
@@ -103,6 +104,7 @@ class Game extends React.Component {
         let changeTurnButton
         let team1PlayerLis
         let team2PlayerLis
+        let collections
         if (game) {
             currentUserObject = Object.values(game.players).filter(p => p.username === currentUser)[0]
             yourColor = game ? currentUserObject.color : null
@@ -110,6 +112,10 @@ class Game extends React.Component {
             changeTurnButton = game.currentTurnColor === yourColor ? <button className="btn btn-info" onClick={this.changeTurn}>End Your Team's Turn</button> : null
             team1PlayerLis = this.teamPlayerLis(1)
             team2PlayerLis = this.teamPlayerLis(2)
+            
+            collections = Object.values(game.players).map((p, i) => (
+                <Hand player={p} key={i}/>
+            ))
         }
         return (
             <div className="App">                
@@ -125,20 +131,15 @@ class Game extends React.Component {
                             {changeTurnButton}
                         </div>
 
+                        <div>
+                            {collections}
+                        </div>
+
                         <Board game={game} 
                             makeMove={makeMove}
                             currentUser={currentUser}
                         />
-                        <div className="team-lists">
-                            <div className="team-list">
-                                <div>Team {game && game.color1.toUpperCase()}:</div>
-                                {team1PlayerLis}
-                            </div>
-                            <div className="team-list">
-                                <div>Team {game && game.color2.toUpperCase()}:</div>
-                                {team2PlayerLis}
-                            </div>
-                        </div>
+                        
                         <div className="game-controls">
                             <button className="btn btn-info" onClick={this.changeTeam}>Change Team</button>
                             <button className="btn btn-info" onClick={this.changeSpymasterStatus}>View/Unview as Spymaster</button>

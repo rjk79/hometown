@@ -1,12 +1,13 @@
 ul {
-    height: 65%;
+    /* height: 65%; */
     width: 100%;
-    /* display: flex;
-    flex-wrap: wrap; */
+    /* display: flex; */
+    padding: 0px;
 }
 
 .card-row {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .card {
@@ -14,8 +15,8 @@ ul {
     background: rgb(230, 210, 180);
     border: 2px solid gray;
     border-radius: 5px;
-    height: 19%;
-    width: 19%;
+    height: 172px;
+    width: 23%;
     padding: 20px 5px;
     display: flex;
     justify-content: center;
@@ -28,8 +29,13 @@ ul {
     width: 100%;
     background: ghostwhite;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.card div div:nth-child(1) {
+    font-weight: 800;
 }
 
 .borderable::before, card::after {

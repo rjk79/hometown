@@ -7,7 +7,7 @@ import { Switch } from 'react-router-dom';
 
 const socket = io() // can specify 'http://localhost:5000' to remove error
 
-class Codemynames extends React.Component {
+class Hometown extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -41,4 +41,4 @@ class Codemynames extends React.Component {
     }
 }
 
-export default Codemynames;
+export default Hometown;
