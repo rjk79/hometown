@@ -1,27 +1,27 @@
 import * as React from 'react';
 import {translateColor} from './utils'
+import './Hand.css'
+import Card from './Card'
 
 export const Hand = (props) => {
     const {player} = props
-    
+
     return (
         <div>
             <div>
-                <div className="title">Player Name: {player.username}</div>
-                {player.hand.map((c, i) => {
-                    const style = {}
-                    style.background = translateColor(c.color)
-                    return (
-                    <div key={i} className={"card"} style={style}>
-                        <div>
-                            <div>{c.name}</div>
-                            <div>{c.description}</div>
-                            <div>{c.activation_numbers}</div>
-                            <div>{c.symbol}</div>
-                            <div>{c.quantity}</div>
+                <div className="title">Coins: {player.coins}</div>
+                <div className="title">Your Hand:</div>
+                <div className="hand-cards">
+                    {player.hand.map((c, i) => {
+                        const style = {}
+                        style.background = translateColor(c.color)
+
+                        return (
+                        <div key={i} className={"card"} style={style}>
+                            <Card card={c} buyable={false} />
                         </div>
-                    </div>
-                )})}
+                    )})}
+                </div>
             </div>
         </div>
     );

@@ -74,7 +74,8 @@ module.exports = CARDS = {
             activation_numbers: [1],
             magnitude: 1,
             symbol: "Wheat",
-            quantity: 6
+            quantity: 6,
+            cost: 1
         },
         {
             name: "Ranch",
@@ -83,7 +84,8 @@ module.exports = CARDS = {
             activation_numbers: [2],
             magnitude: 1,
             symbol: "Cow",
-            quantity: 6
+            quantity: 6,
+            cost: 1
         },
         {
             name: "Forest",
@@ -92,7 +94,8 @@ module.exports = CARDS = {
             activation_numbers: [5],
             magnitude: 1,
             symbol: "Gear",
-            quantity: 6
+            quantity: 6,
+            cost: 3
         },
         {
             name: "Mine",
@@ -101,7 +104,8 @@ module.exports = CARDS = {
             activation_numbers: [9],
             magnitude: 5,
             symbol: "Gear",
-            quantity: 6
+            quantity: 6,
+            cost: 6
         },
         {
             name: "Apple Orchard",
@@ -110,7 +114,8 @@ module.exports = CARDS = {
             activation_numbers: [10],
             magnitude: 3,
             symbol: "Wheat",
-            quantity: 6
+            quantity: 6,
+            cost: 3
         },
         {
             name: "Bakery",
@@ -119,7 +124,8 @@ module.exports = CARDS = {
             activation_numbers: [2, 3],
             magnitude: 1,
             symbol: "Bread",
-            quantity: 6
+            quantity: 6,
+            cost: 1
         },
         {
             name: "Convenience Store",
@@ -128,7 +134,8 @@ module.exports = CARDS = {
             activation_numbers: [4],
             magnitude: 3,
             symbol: "Bread",
-            quantity: 6
+            quantity: 6,
+            cost: 2
         },
         {
             name: "Cheese Factory",
@@ -137,7 +144,8 @@ module.exports = CARDS = {
             activation_numbers: [7],
             magnitude: null,
             symbol: "Factory",
-            quantity: 6
+            quantity: 6,
+            cost: 5
         },
         {
             name: "Furniture Factory",
@@ -146,7 +154,8 @@ module.exports = CARDS = {
             activation_numbers: [8],
             magnitude: null,
             symbol: "Factory",
-            quantity: 6
+            quantity: 6,
+            cost: 3
         },
         {
             name: "Fruit and Vegetable Market",
@@ -155,7 +164,8 @@ module.exports = CARDS = {
             activation_numbers: [11, 12],
             magnitude: null,
             symbol: "Fruit",
-            quantity: 6
+            quantity: 6,
+            cost: 2
         },
         {
             name: "Cafe",
@@ -164,7 +174,8 @@ module.exports = CARDS = {
             activation_numbers: [3],
             magnitude: 1,
             symbol: "Cup",
-            quantity: 6
+            quantity: 6,
+            cost: 2
         },
         {
             name: "Family Restaurant",
@@ -173,7 +184,8 @@ module.exports = CARDS = {
             activation_numbers: [9, 10],
             magnitude: 2,
             symbol: "Cup",
-            quantity: 6
+            quantity: 6,
+            cost: 3
         },
         {
             name: "Stadium",
@@ -182,7 +194,8 @@ module.exports = CARDS = {
             activation_numbers: [6],
             magnitude: 2,
             symbol: "Tower",
-            quantity: 4
+            quantity: 4,
+            cost: 6
         },
         {
             name: "TV Station",
@@ -191,16 +204,18 @@ module.exports = CARDS = {
             activation_numbers: [6],
             magnitude: null,
             symbol: "Tower",
-            quantity: 4
+            quantity: 4,
+            cost: 7
         },
         {
-            name: "TV Station",
+            name: "Business Center",
             description: "When a 6 is rolled on your turn, trade a building with any player",
             color: "purple",
             activation_numbers: [6],
             magnitude: null,
             symbol: "Tower",
-            quantity: 4
+            quantity: 4,
+            cost: 8
         }
     ]
 }

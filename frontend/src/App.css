@@ -123,3 +123,18 @@
   padding: 10px;
   border-radius: 5px;
 }
+
+.roll-dice {
+  font-size: 27px;
+}
+
+.up-triangle {
+  height: 0;
+  width: 0 !important;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid darkcyan;
+  position: absolute;
+  top: -10px;
+  z-index: 1;
+}

@@ -56,7 +56,6 @@ function gameExists(id, socketId) {
         return true
     }
     else {
-        console.log(id, lobby)
         io.to(socketId).emit('receive message', {message: "game timed out -- sorry!", name: "ADMIN"})
         return false
     }
@@ -119,14 +118,14 @@ io.on('connection', (socket) => {
         if (game.shouldChangeTurn) changeTurn(id, socket.id)
     })
 
-    socket.on('change team', data => {
-        const { gameId } = data
+    socket.on('buy card', data => {
+        const { gameId, cardName } = data
         const game = lobby[gameId]
         if (!gameExists(gameId, socket.id)) return; 
 
-        game.changeTeam(socket.id)
+        game.buyCard(socket.id, cardName)
         sendGameToAllPlayers(gameId)
-        sendMessageToAllPlayers(gameId, "--CHANGED TEAMS!--", socket.id)
+        sendMessageToAllPlayers(gameId, `bought a ${cardName}`, socket.id)
     })
 
     socket.on('opt to change turn', data => {
@@ -137,13 +136,13 @@ io.on('connection', (socket) => {
         sendMessageToAllPlayers(gameId, `ended the turn early`, socket.id)
     })
 
-    socket.on('change spymaster status', data => {
+    socket.on('roll dice', data => {
         const { gameId } = data
         const game = lobby[gameId]
         if (!gameExists(gameId, socket.id)) return; 
 
-        game.players[socket.id].isSpymaster = !game.players[socket.id].isSpymaster
+        const diceRoll = game.handleDiceRoll()
         sendGameToAllPlayers(gameId)
-        sendMessageToAllPlayers(gameId, "--CHANGED SPYMASTER STATUS!--", socket.id)
+        sendMessageToAllPlayers(gameId, `Rolled a: ${diceRoll}`, socket.id)
     })
 });

@@ -19,9 +19,7 @@ class Game extends React.Component {
         this.resetGame = this.resetGame.bind(this);
         this.makeMove = this.makeMove.bind(this);
         this.changeTurn = this.changeTurn.bind(this);
-        this.changeTeam = this.changeTeam.bind(this);
-        this.changeSpymasterStatus = this.changeSpymasterStatus.bind(this);
-        this.teamPlayerLis = this.teamPlayerLis.bind(this);
+        this.rollDice = this.rollDice.bind(this);
     }
 
     componentDidMount() {
@@ -32,7 +30,7 @@ class Game extends React.Component {
             })
         });
         this.socket.on("receive game", data => {
-            this.setState({ game: data }, () => console.log(this.state))
+            this.setState({ game: data })
         });
     }
 
@@ -70,28 +68,13 @@ class Game extends React.Component {
         this.socket.emit('opt to change turn', { gameId: id })
     }
 
-    changeTeam() {
+    rollDice() {
         const { id } = this.state.game
-        this.socket.emit('change team', { gameId: id })
-    }
-
-    changeSpymasterStatus() {
-        const { id } = this.state.game
-        this.socket.emit('change spymaster status', { gameId: id })
-    }
-
-    teamPlayerLis (num) {
-        const {game} = this.state
-        return Object.values(game.players).filter(p => p.color === game['color' + num.toString()]).map((p, i) => {
-            const spymasterLabel = p.isSpymaster ? "[SPYMASTER]" : null
-            return (
-                <li key={i} style={{ color: p.color }}>{p.username} {spymasterLabel}</li>
-            )
-        })
+        this.socket.emit('roll dice', { gameId: id })
     }
 
     render() {
-        const { sendMessage, handleSetMessage, resetGame, makeMove } = this
+        const { sendMessage, handleSetMessage, resetGame, makeMove, socket } = this
         const { message, messages, game } = this.state
         const { currentUser } = this.props
 
@@ -102,18 +85,15 @@ class Game extends React.Component {
         let yourColor
         let gameName
         let changeTurnButton
-        let team1PlayerLis
-        let team2PlayerLis
-        let collections
+      
+        let hands
         if (game) {
             currentUserObject = Object.values(game.players).filter(p => p.username === currentUser)[0]
             yourColor = game ? currentUserObject.color : null
             gameName = game ? game.id : null
-            changeTurnButton = game.currentTurnColor === yourColor ? <button className="btn btn-info" onClick={this.changeTurn}>End Your Team's Turn</button> : null
-            team1PlayerLis = this.teamPlayerLis(1)
-            team2PlayerLis = this.teamPlayerLis(2)
+            // changeTurnButton = game.currentTurnColor === yourColor ? <button className="btn btn-info" onClick={this.changeTurn}>End Your Team's Turn</button> : null
             
-            collections = Object.values(game.players).map((p, i) => (
+            hands = Object.values(game.players).map((p, i) => (
                 <Hand player={p} key={i}/>
             ))
         }
@@ -125,25 +105,24 @@ class Game extends React.Component {
                             <div>Room Code: {gameName}</div>
                             <div>Your Username: {currentUser}</div>
                         </div>
-                        <div className="color-reminder on-white" style={game ? {color: translateColor(yourColor)} : {}}>You are on {yourColor && yourColor.toUpperCase()} Team</div>
-                        <div className="color-reminder" style={game ? { background: translateColor(game.currentTurnColor) } : {}}>
-                            <div>It's {game && game.currentTurnColor.toUpperCase()} Team's Turn </div>
+                        <div className="game-controls">
+                            <button className="btn btn-info roll-dice" onClick={this.rollDice}>Roll Dice <i className="fas fa-dice"></i></button>
+                        </div>
+                        <div className="color-reminder" >
+                            <div>It's Somebody's Turn... </div>
                             {changeTurnButton}
                         </div>
 
                         <div>
-                            {collections}
+                            {hands}
                         </div>
 
                         <Board game={game} 
                             makeMove={makeMove}
                             currentUser={currentUser}
+                            socket={socket}
                         />
                         
-                        <div className="game-controls">
-                            <button className="btn btn-info" onClick={this.changeTeam}>Change Team</button>
-                            <button className="btn btn-info" onClick={this.changeSpymasterStatus}>View/Unview as Spymaster</button>
-                        </div>
                     </div>
                     <div className="messaging-controls">
                         <div className="messages">

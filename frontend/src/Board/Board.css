@@ -10,39 +10,7 @@ ul {
     flex-wrap: wrap;
 }
 
-.card {
-    font-weight: 600;
-    background: rgb(230, 210, 180);
-    border: 2px solid gray;
-    border-radius: 5px;
-    height: 172px;
-    width: 23%;
-    padding: 20px 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    margin: 5px;
-}
 
-.card div {
-    width: 100%;
-    background: ghostwhite;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.card div div:nth-child(1) {
-    font-weight: 800;
-}
-
-.borderable::before, card::after {
-    position: absolute;
-    content: "";
-    border-radius: 5px;
-}
 
 /* .card::after {
     width: 0px;
@@ -52,18 +20,7 @@ ul {
     transition: width .3s;
 } */
 
-.borderable::before {
-    width: 100%;
-    height: 0px;
-    border-left: 3px solid rebeccapurple;
-    border-right: 3px solid rebeccapurple;
-    transition: height .3s;
-}
 
-.borderable:hover::before {
-    height: 100%;
-    transition: height .3s;
-}
 
 /* .card:hover::after {
     content: "";
@@ -71,10 +28,6 @@ ul {
     transition: width .3s;
 } */
 
-.borderable:hover {
-    cursor: pointer;
-    animation: flashing 1s ease-in-out infinite;
-}
 
 
 

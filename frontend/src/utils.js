@@ -32,3 +32,18 @@ export function translateColor(color) {
     }
     return res
 }
+
+export function activationNumberLabel(activationNumbers) {
+    const min = Math.min(...activationNumbers)
+    const max = Math.max(...activationNumbers)
+
+    let activationNumberLabel = ""
+    if (isFinite(min)) {
+        activationNumberLabel += min
+        if (isFinite(max) && min !== max) {
+            activationNumberLabel += " - "
+            activationNumberLabel += max
+        }
+    }
+    return activationNumberLabel
+}

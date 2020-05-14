@@ -13,20 +13,26 @@ class Game {
         }
         this.players = {}      
         this.messages = []
-        this.currentTurnColor = "red"
+        this.turnOrder = []
+        this.currentTurnIdx = 0
+
         this.winner = null
         this.mostRecentMove = null
     
         this.makeCards()
+        this.shuffleCards()
+        this.fillMarket()
+    }
 
-        this.cards = this.shuffleCards(this.cards)
-        this.createMarket()
+    currentPlayer() {
+        const playerId = this.turnOrder[this.currentTurnIdx]
+        return this.players[playerId]
     }
 
     makeCards() {
         const { BASE_GAME_CARDS } = CARDS
         for (let i = 0; i < BASE_GAME_CARDS.length; i++) {
-            const { name, description, color, activation_numbers, magnitude, symbol, quantity } = BASE_GAME_CARDS[i]
+            const { name, description, color, activation_numbers, magnitude, symbol, quantity, cost } = BASE_GAME_CARDS[i]
 
             for (let i = 0; i < quantity; i++) {
                 this.cards.push(new Card(
@@ -35,14 +41,16 @@ class Game {
                     color,
                     activation_numbers,
                     magnitude,
-                    symbol
+                    symbol,
+                    cost
                 ))
             }
         }
 
     }
 
-    shuffleCards(cards) { //for any number of cards
+    shuffleCards() { //for any number of cards
+        let cards = this.cards
         let res = [] //indices
         for (let i = 0; i < cards.length; i++) {
             let randomIdx = Math.floor(Math.random() * cards.length)
@@ -51,31 +59,47 @@ class Game {
             }
             res.push(randomIdx)
         }
-        res = res.map(i=>cards[i])
-        return res
+        this.cards = res.map(i=>cards[i])
     }
 
-    createMarket() { //move cards to market
+    fillMarket() { //move cards to market
         const {market, cards} = this
-        while (market.small.length < 5
+        let seen = []
+
+        while ((market.small.length < 5
            || market.big.length < 5
-           || market.purple.length < 3
+           || market.purple.length < 3) && cards.length
         ) {
             const currentCard = cards.pop()
-            const min = Math.min(currentCard.activation_numbers)
-            if (currentCard.color === 'purple' && market.purple.length < 3) {
-                market.purple.push(currentCard)
-            }
-            else if (min <= 6 && market.small.length < 5) {
-                market.small.push(currentCard)
-            }
-            else if (market.big.length < 5) { //min > 6
-                market.big.push(currentCard)
-            }
+            const min = Math.min(...currentCard.activation_numbers)
+            if (currentCard.color === 'purple') {
+                if (market.purple.length < 3) {
+                    market.purple.push(currentCard)
+                }
+                else {
+                    seen.unshift(currentCard) //put it back
+                }
+            } 
             else {
-                cards.unshift(currentCard) //put it back
+                if (min <= 6 && market.small.length < 5) {
+                    market.small.push(currentCard)
+                }
+                else if (min > 6 && market.big.length < 5) { 
+                    market.big.push(currentCard)
+                }
+                else {
+                    seen.unshift(currentCard) //put it back
+                }
             }
         }
+
+        this.cards = seen.concat(cards)
+    }
+
+    addPlayer(playerId, username) {
+        let { players, turnOrder } = this
+        players[playerId] = new Player(username, playerId)
+        turnOrder.push(playerId)
     }
 
     dealCards() {
@@ -96,13 +120,72 @@ class Game {
         })
     }
 
-    addPlayer(playerId, username) {
-        let { players } = this
-        players[playerId] = new Player(username)
+    handleDiceRoll() {
+        const diceRoll = Math.floor(Math.random() * 6) + 1 //1-6
+        // this.triggerRedCards(diceRoll)
+        this.triggerGreenCards(diceRoll)
+        this.triggerBlueCards(diceRoll)
+        // this.triggerPurpleCards(diceRoll)
+        return diceRoll
+    }
+
+    triggerGreenCards(diceRoll) {
+        this.currentPlayer().hand.forEach(c => {
+            if (c.color === 'green' && c.activation_numbers.includes(diceRoll)) {
+                p.coins += c.magnitude
+            }
+        })
+        
+    }
+
+    triggerBlueCards(diceRoll) {
+        Object.values(this.players).forEach(p => {
+            p.hand.forEach(c => {
+                if (c.color === 'blue' && c.activation_numbers.includes(diceRoll)) {
+                    p.coins += c.magnitude
+                }
+            })
+        })
+    }
+
+    triggerRedCards() {
+        const cp = this.currentPlayer()
+        Object.values(this.players).forEach(p => {
+            p.hand.forEach(c => {
+                if (c.color === 'red' && c.activation_numbers.includes(diceRoll)) {
+                    cp.coins -= c.magnitude
+                    p.coins += c.magnitude
+                }
+            })
+        })
+    }
+
+    triggerPurpleCards() {
+
+    }
+
+    buyCard(playerId, cardName) {
+        const {market, players} = this
+        const player = players[playerId]
+
+        Object.keys(market).forEach(c => {
+
+            const idx = market[c].map(c => c.name).indexOf(cardName)
+
+            if (idx !== -1) {
+                const boughtCard = market[c].splice(idx, 1)[0]
+                player.coins -= boughtCard.cost
+                player.hand.push(boughtCard)
+            }
+        })
+        this.fillMarket()
+        this.changeTurn()
     }
 
     changeTurn() {
-        // this.currentTurnColor = this.otherColor(this.currentTurnColor)
+        const {players} = this
+        this.currentTurnIdx += 1
+        if (this.currentTurnIdx === Object.keys(players).length) this.currentTurnIdx = 0
     }
 
     setMostRecentMove(player, card) {
